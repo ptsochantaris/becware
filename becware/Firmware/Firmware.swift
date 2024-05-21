@@ -104,16 +104,12 @@ final class Firmware {
         let opcodes = opcodeBlock()
 
         for opcode in opcodes {
-            if let label = opcode.providesLabel() {
+            if let label = opcode.label {
                 parseState.labels[label] = org
                 print("   Label `\(label)` -> ", terminator: "")
                 print(fixedWidthRepresentation(of: org, radix: 16, max: 2).uppercased())
             }
-            if let newOrg = opcode.updatedOrg() {
-                org = newOrg
-            } else {
-                org += opcode.assembledLength()
-            }
+            org = opcode.updatedOrg(from: org)
         }
         if !parseState.labels.isEmpty {
             print()
@@ -127,20 +123,17 @@ final class Firmware {
                 print("  ", fixedWidthRepresentation(of: org, radix: 16, max: 2).uppercased(), terminator: ": ")
             }
 
-            for byte in assembledBytes {
+            for byte in assembledBytes.enumerated() {
                 print("[", terminator: "")
-                print(fixedWidthRepresentation(of: byte, radix: 16, max: 2).uppercased(), terminator: "] ")
-                bytes[org] = byte
-                org += 1
+                print(fixedWidthRepresentation(of: byte.element, radix: 16, max: 2).uppercased(), terminator: "] ")
+                bytes[org + byte.offset] = byte.element
             }
 
             if !assembledBytes.isEmpty {
                 print()
             }
 
-            if let newOrg = opcode.updatedOrg() {
-                org = newOrg
-            }
+            org = opcode.updatedOrg(from: org)
         }
 
         print()

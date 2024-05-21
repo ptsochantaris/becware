@@ -30,10 +30,6 @@ struct Opcode: Assemblable {
         self.param = param
     }
 
-    func updatedOrg() -> Int? {
-        nil
-    }
-
     func bytes(with parseState: ParseState) throws -> [UInt8] {
         if command.takesParam {
             if let param {
@@ -46,11 +42,7 @@ struct Opcode: Assemblable {
         }
     }
 
-    func providesLabel() -> String? {
-        nil
-    }
-
-    func assembledLength() -> Int {
-        command.takesParam ? 2 : 1
+    func updatedOrg(from original: Int) -> Int {
+        original + (command.takesParam ? 2 : 1)
     }
 }
