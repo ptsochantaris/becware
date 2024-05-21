@@ -19,10 +19,10 @@ final class Firmware {
     }
 
     private func printBinary(at i: Int) {
-        print(fixedWidthRepresentation(of: i, radix: 2, max: Self.bits), terminator: ": ")
-        print(fixedWidthRepresentation(of: data1[i], radix: 2, max: 8), terminator: "  ")
-        print(fixedWidthRepresentation(of: data2[i], radix: 2, max: 8), terminator: "  ")
-        print(fixedWidthRepresentation(of: data3[i], radix: 2, max: 8))
+        print(formatted(i, radix: 2, max: Self.bits), terminator: ": ")
+        print(formatted(data1[i], radix: 2, max: 8), terminator: "  ")
+        print(formatted(data2[i], radix: 2, max: 8), terminator: "  ")
+        print(formatted(data3[i], radix: 2, max: 8))
     }
 
     private static let bits = 9
@@ -50,7 +50,7 @@ final class Firmware {
         print()
 
         for command in Command.allCases {
-            print("Adding", command.name, fixedWidthRepresentation(of: command.rawValue, radix: 2, max: 4))
+            print("Adding", command.name, formatted(command.rawValue, radix: 2, max: 4))
 
             let flagSets: [Flag] = [[], .carry, .zero, [.carry, .zero]]
             for flagSet in flagSets {
@@ -70,11 +70,11 @@ final class Firmware {
         }
 
         for index in stride(from: 0, to: Self.total, by: 8) {
-            print(fixedWidthRepresentation(of: index, radix: 2, max: Self.bits), terminator: ": ")
+            print(formatted(index, radix: 2, max: Self.bits), terminator: ": ")
 
             for array in [data1, data2, data3] {
                 for i in index ..< index + 8 {
-                    print(fixedWidthRepresentation(of: array[i], radix: 16, max: 2), terminator: " ")
+                    print(formatted(array[i], radix: 16, max: 2), terminator: " ")
                 }
                 print(" ", terminator: "")
             }
@@ -107,7 +107,7 @@ final class Firmware {
             if let label = opcode.label {
                 parseState.labels[label] = org
                 print("   Label `\(label)` -> ", terminator: "")
-                print(fixedWidthRepresentation(of: org, radix: 16, max: 2).uppercased())
+                print(formatted(org, radix: 16, max: 2).uppercased())
             }
             org = opcode.updatedOrg(from: org)
         }
@@ -120,12 +120,12 @@ final class Firmware {
         for opcode in opcodes {
             let assembledBytes = try opcode.bytes(with: parseState)
             if !assembledBytes.isEmpty {
-                print("  ", fixedWidthRepresentation(of: org, radix: 16, max: 2).uppercased(), terminator: ": ")
+                print("  ", formatted(org, radix: 16, max: 2).uppercased(), terminator: ": ")
             }
 
             for byte in assembledBytes.enumerated() {
                 print("[", terminator: "")
-                print(fixedWidthRepresentation(of: byte.element, radix: 16, max: 2).uppercased(), terminator: "] ")
+                print(formatted(byte.element, radix: 16, max: 2).uppercased(), terminator: "] ")
                 bytes[org + byte.offset] = byte.element
             }
 
@@ -146,7 +146,7 @@ final class Firmware {
         print("Binary:")
         print()
         for byte in bytes {
-            print(fixedWidthRepresentation(of: byte, radix: 16, max: 2).uppercased(), terminator: " ")
+            print(formatted(byte, radix: 16, max: 2).uppercased(), terminator: " ")
         }
 
         print()

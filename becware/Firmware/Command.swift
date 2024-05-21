@@ -1,18 +1,18 @@
 import Foundation
 
 enum Command: Int, CaseIterable {
-    case NOP = 0b0000,
-         LDA = 0b0001, // Load A              Address to load into A
-         LDB = 0b0010, // Load B              Address to load into B
+    case NOP  = 0b0000,
+         LDA  = 0b0001, // Load A              Address to load into A
+         LDB  = 0b0010, // Load B              Address to load into B
          CALC = 0b0011, // Calculate           Set ALU function and store result in A
          STOR = 0b0100, // Store into Address  Address to store the contents of A
-         LDI = 0b0101, // Load immediate      Value to set A
-         JMP = 0b0110, // Jump                Address to jump to
-         JC = 0b0111, // Jump on carry       Address to jump to
-         JZ = 0b1000, // Jump on zero        Address to jump to
+         LDI  = 0b0101, // Load immediate      Value to set A
+         JMP  = 0b0110, // Jump                Address to jump to
+         JC   = 0b0111, // Jump on carry       Address to jump to
+         JZ   = 0b1000, // Jump on zero        Address to jump to
 
-         OUT = 0b1110, // Display A           (no args)
-         HALT = 0b1111 // Halt                (no args)
+         OUT  = 0b1110, // Display A           (no args)
+         HALT = 0b1111  // Halt                (no args)
 
     var name: String {
         switch self {
