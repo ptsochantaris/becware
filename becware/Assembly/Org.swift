@@ -1,9 +1,13 @@
 import Foundation
 
 struct Org: Assemblable {
-    let org: Int
+    let org: UInt16
 
-    func updatedOrg(from _: Int) -> Int {
+    init(_ org: UInt16) {
+        self.org = org
+    }
+
+    func updatedOrg(from _: UInt16) -> UInt16 {
         org
     }
 }

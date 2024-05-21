@@ -1,27 +1,28 @@
 import Foundation
 
 let firmware = Firmware()
+
 firmware.build()
 
 do {
     try firmware.assemble(to: "assembled.bin") {
-        Org(org: 0)
+        Org(0)
 
-        Opcode(.LDA, .location("startValue"))
-        Opcode(.LDB, .location("one"))
-        Opcode(.OUT)
+        Command.LoadA(from: .label("startValue"))
+        Command.LoadB(from: .label("one"))
+        Command.Out
 
         Label("Ascending")
-        Opcode(.CALC, .addition)
-        Opcode(.JC, .location("Descending"))
-        Opcode(.OUT)
-        Opcode(.JMP, .location("Ascending"))
+        Command.Calculate(using: .addition)
+        Command.JumpOnCarry(to: .label("Descending"))
+        Command.Out
+        Command.Jump(to: .label("Ascending"))
 
         Label("Descending")
-        Opcode(.CALC, .subtraction)
-        Opcode(.OUT)
-        Opcode(.JZ, .location("Ascending"))
-        Opcode(.JMP, .location("Descending"))
+        Command.Calculate(using: .subtraction)
+        Command.Out
+        Command.JumpOnZero(to: .label("Ascending"))
+        Command.Jump(to: .label("Descending"))
 
         Label("one")
         Content(bytes: [1])

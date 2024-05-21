@@ -25,22 +25,23 @@ final class Firmware {
         print(formatted(data3[i], radix: 2, max: 8))
     }
 
-    private static let bits = 9
+    private static let commandBitCount = 4
+    private static let stepBitCount = 4
+    private static let flagBitCount = 2
+    private static let bits = commandBitCount + stepBitCount + flagBitCount
     private static let total = 1 << bits
-    private let stepBitCount = 3
-    private let flagBitCount = 2
 
     private var data1 = Data(repeating: 0, count: total)
     private var data2 = Data(repeating: 0, count: total)
     private var data3 = Data(repeating: 0, count: total)
 
-    private func baseAddress(for flagSet: Flag) -> Int {
-        var base = 0
+    private func byte(for flagSet: Flag) -> UInt8 {
+        var base: UInt8 = 0
         if flagSet.contains(.zero) {
-            base |= (1 << 8)
+            base |= 0b10
         }
         if flagSet.contains(.carry) {
-            base |= (1 << 7)
+            base |= 0b01
         }
         return base
     }
@@ -50,19 +51,21 @@ final class Firmware {
         print()
 
         for command in Command.allCases {
-            print("Adding", command.name, formatted(command.rawValue, radix: 2, max: 4))
+            print("Adding", command.name, formatted(command.byte, radix: 2, max: Self.commandBitCount))
 
             let flagSets: [Flag] = [[], .carry, .zero, [.carry, .zero]]
             for flagSet in flagSets {
                 if !flagSet.isEmpty {
                     print("Flags: \(flagSet.name)")
                 }
-                var address = (command.rawValue << stepBitCount) | baseAddress(for: flagSet)
-                for steps in command.steps(for: flagSet) {
-                    (data1[address], data2[address], data3[address]) = bytes(for: steps)
+                let flagBase = Int(byte(for: flagSet)) << (Self.commandBitCount + Self.stepBitCount)
+                let commandBase = Int(command.byte) << Self.stepBitCount
+                for stepBlock in command.steps(for: flagSet).enumerated() {
+                    let address = flagBase | commandBase | stepBlock.offset
+
+                    (data1[address], data2[address], data3[address]) = bytes(for: stepBlock.element)
 
                     printBinary(at: address)
-                    address += 1
                 }
             }
 
@@ -100,7 +103,7 @@ final class Firmware {
         print()
 
         var parseState = ParseState(labels: [:])
-        var org = 0
+        var org: UInt16 = 0
         let opcodes = opcodeBlock()
 
         for opcode in opcodes {
@@ -115,7 +118,7 @@ final class Firmware {
             print()
         }
 
-        var bytes = Data(repeating: 0, count: org)
+        var bytes = Data(repeating: 0, count: Int(org))
         org = 0
         for opcode in opcodes {
             let assembledBytes = try opcode.bytes(with: parseState)
@@ -126,7 +129,8 @@ final class Firmware {
             for byte in assembledBytes.enumerated() {
                 print("[", terminator: "")
                 print(formatted(byte.element, radix: 16, max: 2).uppercased(), terminator: "] ")
-                bytes[org + byte.offset] = byte.element
+                let address = Int(org) + byte.offset
+                bytes[address] = byte.element
             }
 
             if !assembledBytes.isEmpty {
@@ -137,12 +141,6 @@ final class Firmware {
         }
 
         print()
-
-        print("Writing assembled bytes… ", terminator: "")
-        try bytes.write(to: home.appendingPathComponent(file))
-        print("Done")
-        print()
-
         print("Binary:")
         print()
         for byte in bytes {
@@ -150,6 +148,10 @@ final class Firmware {
         }
 
         print()
+        print()
+        print("Writing assembled bytes… ", terminator: "")
+        try bytes.write(to: home.appendingPathComponent(file))
+        print("Done")
         print()
     }
 }

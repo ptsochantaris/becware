@@ -7,7 +7,7 @@ struct Content: Assemblable {
         bytes
     }
 
-    func updatedOrg(from original: Int) -> Int {
-        original + bytes.count
+    func updatedOrg(from original: UInt16) -> UInt16 {
+        original + UInt16(bytes.count)
     }
 }

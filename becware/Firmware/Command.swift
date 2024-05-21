@@ -1,115 +1,238 @@
 import Foundation
 
-enum Command: Int, CaseIterable {
-    case NOP  = 0b0000,
-         LDA  = 0b0001, // Load A              Address to load into A
-         LDB  = 0b0010, // Load B              Address to load into B
-         CALC = 0b0011, // Calculate           Set ALU function and store result in A
-         STOR = 0b0100, // Store into Address  Address to store the contents of A
-         LDI  = 0b0101, // Load immediate      Value to set A
-         JMP  = 0b0110, // Jump                Address to jump to
-         JC   = 0b0111, // Jump on carry       Address to jump to
-         JZ   = 0b1000, // Jump on zero        Address to jump to
+extension UInt16 {
+    var bytes: [UInt8] {
+        let AL = UInt8(self & 0xFF)
+        let AH = UInt8(self >> 8)
+        return [AH, AL]
+    }
+}
 
-         OUT  = 0b1110, // Display A           (no args)
-         HALT = 0b1111  // Halt                (no args)
+enum Command: CaseIterable, Assemblable {
+    enum Location {
+        case address(UInt16), label(String)
 
-    var name: String {
-        switch self {
-        case .NOP: "NOP"
-        case .CALC: "CALC"
-        case .HALT: "HALT"
-        case .LDA: "LDA"
-        case .LDB: "LDB"
-        case .OUT: "OUT"
-        case .STOR: "STOR"
-        case .LDI: "LDI"
-        case .JMP: "JMP"
-        case .JC: "JC"
-        case .JZ: "JZ"
+        func bytes(with parseState: ParseState) throws -> [UInt8] {
+            switch self {
+            case let .label(name):
+                if let address = parseState.labels[name] {
+                    address.bytes
+                } else {
+                    throw "Unknown label: \(name)"
+                }
+
+            case let .address(value):
+                value.bytes
+            }
         }
     }
 
-    var byte: UInt8 {
-        UInt8(rawValue)
+    enum Arithmetic {
+        case addition, subtraction
+
+        var byte: UInt8 {
+            switch self {
+            case .addition:
+                0b1001
+
+            case .subtraction:
+                0b0110
+            }
+        }
     }
 
-    var takesParam: Bool {
+    case NoOp,
+         LoadA(from: Location),
+         LoadB(from: Location),
+         Calculate(using: Arithmetic),
+         Store(to: Location),
+         LoadImmediate(number: UInt8),
+         Jump(to: Location),
+         JumpOnCarry(to: Location),
+         JumpOnZero(to: Location),
+         Out,
+         Halt
+
+    private static let nullLocation = Location.address(0)
+
+    static var allCases: [Command] {
+        [
+            .NoOp,
+            .LoadA(from: nullLocation),
+            .LoadB(from: nullLocation),
+            .Calculate(using: .addition),
+            .Store(to: nullLocation),
+            .LoadImmediate(number: 0),
+            .Jump(to: nullLocation),
+            .JumpOnCarry(to: nullLocation),
+            .JumpOnZero(to: nullLocation),
+            .Out,
+            .Halt
+        ]
+    }
+
+    var byte: UInt8 {
         switch self {
-        case .CALC, .JC, .JMP, .JZ, .LDA, .LDB, .LDI, .STOR:
-            true
-        case .HALT, .NOP, .OUT:
-            false
+        case .NoOp: 0b0000
+        case .LoadA: 0b0001 // Address to load into A
+        case .LoadB: 0b0010 // Address to load into B
+        case .Calculate: 0b0011 // Set ALU function and store result in A
+        case .Store: 0b0100 // Address to store the contents of A
+        case .LoadImmediate: 0b0101 // Value to set A
+        case .Jump: 0b0110 // Address to jump to
+        case .JumpOnCarry: 0b0111 // Address to jump to
+        case .JumpOnZero: 0b1000 // Address to jump to
+        case .Out: 0b1110
+        case .Halt: 0b1111
+        }
+    }
+
+    var name: String {
+        switch self {
+        case .NoOp: "NOP"
+        case .Calculate: "CALC"
+        case .Halt: "HALT"
+        case .LoadA: "LDA"
+        case .LoadB: "LDB"
+        case .Out: "OUT"
+        case .Store: "STOR"
+        case .LoadImmediate: "LDI"
+        case .Jump: "JMP"
+        case .JumpOnCarry: "JC"
+        case .JumpOnZero: "JZ"
+        }
+    }
+
+    var expectedLength: UInt16 {
+        switch self {
+        case .Jump, .JumpOnCarry, .JumpOnZero, .LoadA, .LoadB, .Store:
+            3
+        case .Calculate, .LoadImmediate:
+            2
+        case .Halt, .NoOp, .Out:
+            1
         }
     }
 
     private static let instructionFetch: [[Microcode]] = [
-        [.addressIn, .counterOut],
+        [.addressHIn, .counterHOut],
+        [.addressLIn, .counterLOut],
         [.ramOut, .instructionIn, .counterIncrement]
     ]
 
-    private static let parameterFetch: [[Microcode]] = [
-        [.addressIn, .counterOut],
-        [.ramOut, .argumentIn, .counterIncrement]
+    private static let argumentFetch8: [[Microcode]] = [
+        [.addressHIn, .counterHOut],
+        [.addressLIn, .counterLOut],
+        [.ramOut, .argumentLIn, .counterIncrement]
     ]
 
-    private static let next: [[Microcode]] = [
-        [.nextCommand]
+    private static let argumentFetch16: [[Microcode]] = [
+        [.addressHIn, .counterHOut],
+        [.addressLIn, .counterLOut],
+        [.ramOut, .argumentLIn, .counterIncrement],
+        [.addressHIn, .counterHOut],
+        [.addressLIn, .counterLOut],
+        [.ramOut, .argumentHIn, .counterIncrement]
     ]
 
     private func specificSteps(for flags: Flag) -> [[Microcode]] {
         switch self {
-        case .NOP: [
-            ]
+        case .NoOp: []
 
-        case .LDA: [
-                [.addressIn, .argumentOut],
+        case .LoadA: Self.argumentFetch16 + [
+                [.addressHIn, .argumentHOut],
+                [.addressLIn, .argumentLOut],
                 [.ramOut, .regAIn]
             ]
 
-        case .LDB: [
-                [.addressIn, .argumentOut],
+        case .LoadB: Self.argumentFetch16 + [
+                [.addressHIn, .argumentHOut],
+                [.addressLIn, .argumentLOut],
                 [.ramOut, .regBIn]
             ]
 
-        case .CALC: [
-                [.calcIn, .argumentOut],
+        case .Calculate: Self.argumentFetch8 + [
+                [.calcIn, .argumentLOut],
                 [.regAIn, .calcOut, .flagsIn]
             ]
 
-        case .OUT: [
+        case .Out: [
                 [.regAOut, .displayIn]
             ]
 
-        case .LDI: [
-                [.argumentOut, .regAIn]
+        case .LoadImmediate: Self.argumentFetch8 + [
+                [.argumentLOut, .regAIn]
             ]
 
-        case .HALT: [
+        case .Halt: [
                 [.halt]
             ]
 
-        case .STOR: [
-                [.addressIn, .argumentOut],
+        case .Store: Self.argumentFetch16 + [
+                [.addressHIn, .argumentHOut],
+                [.addressLIn, .argumentLOut],
                 [.regAOut, .ramIn]
             ]
 
-        case .JMP: [
-                [.argumentOut, .counterIn]
+        case .Jump: Self.argumentFetch16 + [
+                [.addressHIn, .argumentHOut],
+                [.addressLIn, .argumentLOut],
+                [.argumentHOut, .counterHIn],
+                [.argumentLOut, .counterLIn]
             ]
 
-        case .JC:
-            flags.contains(.carry) ? [[.argumentOut, .counterIn]] : []
+        case .JumpOnCarry:
+            flags.contains(.carry) ? Self.argumentFetch16 + [
+                [.addressHIn, .argumentHOut],
+                [.addressLIn, .argumentLOut],
+                [.argumentHOut, .counterHIn],
+                [.argumentLOut, .counterLIn]
+            ] : []
 
-        case .JZ:
-            flags.contains(.zero) ? [[.argumentOut, .counterIn]] : []
+        case .JumpOnZero:
+            flags.contains(.zero) ? Self.argumentFetch16 + [
+                [.addressHIn, .argumentHOut],
+                [.addressLIn, .argumentLOut],
+                [.argumentHOut, .counterHIn],
+                [.argumentLOut, .counterLIn]
+            ] : []
         }
     }
 
     func steps(for flags: Flag) -> [[Microcode]] {
         (Self.instructionFetch
-            + (takesParam ? Self.parameterFetch : [])
             + specificSteps(for: flags)
-            + Self.next).filter { !$0.isEmpty }
+            + [[.nextCommand]]).filter { !$0.isEmpty }
+    }
+
+    func bytes(with parseState: ParseState) throws -> [UInt8] {
+        var bytes = [byte]
+
+        switch self {
+        case .Halt, .NoOp, .Out: break
+        case let .Jump(location),
+             let .JumpOnCarry(location),
+             let .JumpOnZero(location),
+             let .LoadA(location),
+             let .LoadB(location),
+             let .Store(location):
+            bytes += try location.bytes(with: parseState)
+
+        case let .LoadImmediate(number):
+            bytes += [number]
+
+        case let .Calculate(operation):
+            bytes += [operation.byte]
+        }
+
+        if bytes.count == expectedLength {
+            return bytes
+        }
+
+        throw "Command \(name) requires a parameter"
+    }
+
+    func updatedOrg(from original: UInt16) -> UInt16 {
+        original + expectedLength
     }
 }

@@ -16,7 +16,6 @@
 		169E7D012BFBE40400EB541B /* ParseState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 169E7D002BFBE40400EB541B /* ParseState.swift */; };
 		169E7D032BFBE41E00EB541B /* Org.swift in Sources */ = {isa = PBXBuildFile; fileRef = 169E7D022BFBE41E00EB541B /* Org.swift */; };
 		169E7D052BFBE42B00EB541B /* Label.swift in Sources */ = {isa = PBXBuildFile; fileRef = 169E7D042BFBE42B00EB541B /* Label.swift */; };
-		169E7D072BFBE43900EB541B /* Opcode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 169E7D062BFBE43900EB541B /* Opcode.swift */; };
 		169E7D092BFBE48000EB541B /* Flag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 169E7D082BFBE48000EB541B /* Flag.swift */; };
 		169E7D0D2BFBE76200EB541B /* Firmware.swift in Sources */ = {isa = PBXBuildFile; fileRef = 169E7D0C2BFBE76200EB541B /* Firmware.swift */; };
 		169E7D112BFBEBFC00EB541B /* Globals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 169E7D102BFBEBFC00EB541B /* Globals.swift */; };
@@ -45,7 +44,6 @@
 		169E7D002BFBE40400EB541B /* ParseState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParseState.swift; sourceTree = "<group>"; };
 		169E7D022BFBE41E00EB541B /* Org.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Org.swift; sourceTree = "<group>"; };
 		169E7D042BFBE42B00EB541B /* Label.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Label.swift; sourceTree = "<group>"; };
-		169E7D062BFBE43900EB541B /* Opcode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Opcode.swift; sourceTree = "<group>"; };
 		169E7D082BFBE48000EB541B /* Flag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Flag.swift; sourceTree = "<group>"; };
 		169E7D0C2BFBE76200EB541B /* Firmware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Firmware.swift; sourceTree = "<group>"; };
 		169E7D102BFBEBFC00EB541B /* Globals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Globals.swift; sourceTree = "<group>"; };
@@ -107,7 +105,6 @@
 				169E7CFE2BFBE3EB00EB541B /* Content.swift */,
 				169E7CF62BFBE36B00EB541B /* InstructionBuilder.swift */,
 				169E7D042BFBE42B00EB541B /* Label.swift */,
-				169E7D062BFBE43900EB541B /* Opcode.swift */,
 				169E7D022BFBE41E00EB541B /* Org.swift */,
 				169E7D002BFBE40400EB541B /* ParseState.swift */,
 			);
@@ -177,7 +174,6 @@
 				169E7CFD2BFBE3D600EB541B /* Assemblable.swift in Sources */,
 				169E7CF92BFBE39800EB541B /* Command.swift in Sources */,
 				169E7D032BFBE41E00EB541B /* Org.swift in Sources */,
-				169E7D072BFBE43900EB541B /* Opcode.swift in Sources */,
 				169E7D112BFBEBFC00EB541B /* Globals.swift in Sources */,
 				169E7D0D2BFBE76200EB541B /* Firmware.swift in Sources */,
 				169E7D092BFBE48000EB541B /* Flag.swift in Sources */,

@@ -1,5 +1,5 @@
 import Foundation
 
 struct ParseState {
-    var labels: [String: Int]
+    var labels: [String: UInt16]
 }
