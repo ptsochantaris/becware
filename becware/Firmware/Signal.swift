@@ -1,6 +1,6 @@
 import Foundation
 
-enum Microcode {
+enum Signal {
     case halt
     case addressHIn
     case addressLIn
