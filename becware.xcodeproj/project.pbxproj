@@ -10,7 +10,7 @@
 		16434B0F2BAF68D20025F16B /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16434B0E2BAF68D20025F16B /* main.swift */; };
 		169E7CF72BFBE36B00EB541B /* InstructionBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 169E7CF62BFBE36B00EB541B /* InstructionBuilder.swift */; };
 		169E7CF92BFBE39800EB541B /* Command.swift in Sources */ = {isa = PBXBuildFile; fileRef = 169E7CF82BFBE39800EB541B /* Command.swift */; };
-		169E7CFB2BFBE3B100EB541B /* Microcode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 169E7CFA2BFBE3B100EB541B /* Microcode.swift */; };
+		169E7CFB2BFBE3B100EB541B /* Signal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 169E7CFA2BFBE3B100EB541B /* Signal.swift */; };
 		169E7CFD2BFBE3D600EB541B /* Assemblable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 169E7CFC2BFBE3D600EB541B /* Assemblable.swift */; };
 		169E7CFF2BFBE3EB00EB541B /* Content.swift in Sources */ = {isa = PBXBuildFile; fileRef = 169E7CFE2BFBE3EB00EB541B /* Content.swift */; };
 		169E7D012BFBE40400EB541B /* ParseState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 169E7D002BFBE40400EB541B /* ParseState.swift */; };
@@ -38,7 +38,7 @@
 		16434B0E2BAF68D20025F16B /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		169E7CF62BFBE36B00EB541B /* InstructionBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstructionBuilder.swift; sourceTree = "<group>"; };
 		169E7CF82BFBE39800EB541B /* Command.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Command.swift; sourceTree = "<group>"; };
-		169E7CFA2BFBE3B100EB541B /* Microcode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Microcode.swift; sourceTree = "<group>"; };
+		169E7CFA2BFBE3B100EB541B /* Signal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Signal.swift; sourceTree = "<group>"; };
 		169E7CFC2BFBE3D600EB541B /* Assemblable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Assemblable.swift; sourceTree = "<group>"; };
 		169E7CFE2BFBE3EB00EB541B /* Content.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Content.swift; sourceTree = "<group>"; };
 		169E7D002BFBE40400EB541B /* ParseState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParseState.swift; sourceTree = "<group>"; };
@@ -93,7 +93,7 @@
 				169E7CF82BFBE39800EB541B /* Command.swift */,
 				169E7D0C2BFBE76200EB541B /* Firmware.swift */,
 				169E7D082BFBE48000EB541B /* Flag.swift */,
-				169E7CFA2BFBE3B100EB541B /* Microcode.swift */,
+				169E7CFA2BFBE3B100EB541B /* Signal.swift */,
 			);
 			path = Firmware;
 			sourceTree = "<group>";
@@ -179,7 +179,7 @@
 				169E7D092BFBE48000EB541B /* Flag.swift in Sources */,
 				169E7D052BFBE42B00EB541B /* Label.swift in Sources */,
 				169E7D012BFBE40400EB541B /* ParseState.swift in Sources */,
-				169E7CFB2BFBE3B100EB541B /* Microcode.swift in Sources */,
+				169E7CFB2BFBE3B100EB541B /* Signal.swift in Sources */,
 				169E7CFF2BFBE3EB00EB541B /* Content.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

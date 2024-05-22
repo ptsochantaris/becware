@@ -114,19 +114,19 @@ enum Command: CaseIterable, Assemblable {
         }
     }
 
-    private static let instructionFetch: [[Microcode]] = [
+    private static let instructionFetch: [[Signal]] = [
         [.addressHIn, .counterHOut],
         [.addressLIn, .counterLOut],
         [.ramOut, .instructionIn, .counterIncrement]
     ]
 
-    private static let argumentFetch8: [[Microcode]] = [
+    private static let argumentFetch8: [[Signal]] = [
         [.addressHIn, .counterHOut],
         [.addressLIn, .counterLOut],
         [.ramOut, .argumentLIn, .counterIncrement]
     ]
 
-    private static let argumentFetch16: [[Microcode]] = [
+    private static let argumentFetch16: [[Signal]] = [
         [.addressHIn, .counterHOut],
         [.addressLIn, .counterLOut],
         [.ramOut, .argumentLIn, .counterIncrement],
@@ -135,7 +135,7 @@ enum Command: CaseIterable, Assemblable {
         [.ramOut, .argumentHIn, .counterIncrement]
     ]
 
-    private func specificSteps(for flags: Flag) -> [[Microcode]] {
+    private func specificSteps(for flags: Flag) -> [[Signal]] {
         switch self {
         case .NoOp: []
 
@@ -199,7 +199,7 @@ enum Command: CaseIterable, Assemblable {
         }
     }
 
-    func steps(for flags: Flag) -> [[Microcode]] {
+    func steps(for flags: Flag) -> [[Signal]] {
         (Self.instructionFetch
             + specificSteps(for: flags)
             + [[.nextCommand]]).filter { !$0.isEmpty }

@@ -1,7 +1,7 @@
 import Foundation
 
 final class Firmware {
-    private func bytes(for steps: [Microcode]) -> (UInt8, UInt8, UInt8) {
+    private func bytes(for steps: [Signal]) -> (UInt8, UInt8, UInt8) {
         var firstByte: UInt8 = 0
         var secondByte: UInt8 = 0
         var thirdByte: UInt8 = 0
