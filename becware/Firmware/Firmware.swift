@@ -18,13 +18,6 @@ final class Firmware {
         return (firstByte, secondByte, thirdByte)
     }
 
-    private func printBinary(at i: Int) {
-        print(formatted(i, radix: 2, max: Self.bits), terminator: ": ")
-        print(formatted(data1[i], radix: 2, max: 8), terminator: "  ")
-        print(formatted(data2[i], radix: 2, max: 8), terminator: "  ")
-        print(formatted(data3[i], radix: 2, max: 8))
-    }
-
     private static let commandBitCount = 4
     private static let stepBitCount = 4
     private static let flagBitCount = 2
@@ -65,7 +58,11 @@ final class Firmware {
 
                     (data1[address], data2[address], data3[address]) = bytes(for: stepBlock.element)
 
-                    printBinary(at: address)
+                    print(formatted(address, radix: 2, max: Self.bits), terminator: ": ")
+                    print(formatted(data1[address], radix: 2, max: 8), terminator: "  ")
+                    print(formatted(data2[address], radix: 2, max: 8), terminator: "  ")
+                    print(formatted(data3[address], radix: 2, max: 8), terminator: " - ")
+                    print(stepBlock.element.map { $0.rawValue }.joined(separator: ", "))
                 }
             }
 

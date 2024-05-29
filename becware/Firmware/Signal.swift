@@ -1,6 +1,6 @@
 import Foundation
 
-enum Signal {
+enum Signal: String {
     case halt
     case addressHIn
     case addressLIn

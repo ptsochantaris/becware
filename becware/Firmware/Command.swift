@@ -46,7 +46,7 @@ enum Command: CaseIterable, Assemblable {
          LoadB(from: Location),
          Calculate(using: Arithmetic),
          Store(to: Location),
-         LoadImmediate(number: UInt8),
+         SetA(number: UInt8),
          Jump(to: Location),
          JumpOnCarry(to: Location),
          JumpOnZero(to: Location),
@@ -62,7 +62,7 @@ enum Command: CaseIterable, Assemblable {
             .LoadB(from: nullLocation),
             .Calculate(using: .addition),
             .Store(to: nullLocation),
-            .LoadImmediate(number: 0),
+            .SetA(number: 0),
             .Jump(to: nullLocation),
             .JumpOnCarry(to: nullLocation),
             .JumpOnZero(to: nullLocation),
@@ -78,7 +78,7 @@ enum Command: CaseIterable, Assemblable {
         case .LoadB: 0b0010 // Address to load into B
         case .Calculate: 0b0011 // Set ALU function and store result in A
         case .Store: 0b0100 // Address to store the contents of A
-        case .LoadImmediate: 0b0101 // Value to set A
+        case .SetA: 0b0101 // Value to set A
         case .Jump: 0b0110 // Address to jump to
         case .JumpOnCarry: 0b0111 // Address to jump to
         case .JumpOnZero: 0b1000 // Address to jump to
@@ -89,17 +89,17 @@ enum Command: CaseIterable, Assemblable {
 
     var name: String {
         switch self {
-        case .NoOp: "NOP"
-        case .Calculate: "CALC"
-        case .Halt: "HALT"
-        case .LoadA: "LDA"
-        case .LoadB: "LDB"
-        case .Out: "OUT"
-        case .Store: "STOR"
-        case .LoadImmediate: "LDI"
-        case .Jump: "JMP"
-        case .JumpOnCarry: "JC"
-        case .JumpOnZero: "JZ"
+        case .NoOp: "NoOp"
+        case .Calculate: "Calculate"
+        case .Halt: "Halt"
+        case .LoadA: "LoadA"
+        case .LoadB: "LoadB"
+        case .Out: "Out"
+        case .Store: "Store"
+        case .SetA: "SetA"
+        case .Jump: "Jump"
+        case .JumpOnCarry: "JumpOnCarry"
+        case .JumpOnZero: "JumpOnZero"
         }
     }
 
@@ -107,7 +107,7 @@ enum Command: CaseIterable, Assemblable {
         switch self {
         case .Jump, .JumpOnCarry, .JumpOnZero, .LoadA, .LoadB, .Store:
             3
-        case .Calculate, .LoadImmediate:
+        case .Calculate, .SetA:
             2
         case .Halt, .NoOp, .Out:
             1
@@ -129,10 +129,10 @@ enum Command: CaseIterable, Assemblable {
     private static let argumentFetch16: [[Signal]] = [
         [.addressHIn, .counterHOut],
         [.addressLIn, .counterLOut],
-        [.ramOut, .argumentLIn, .counterIncrement],
+        [.ramOut, .argumentHIn, .counterIncrement],
         [.addressHIn, .counterHOut],
         [.addressLIn, .counterLOut],
-        [.ramOut, .argumentHIn, .counterIncrement]
+        [.ramOut, .argumentLIn, .counterIncrement]
     ]
 
     private func specificSteps(for flags: Flag) -> [[Signal]] {
@@ -160,7 +160,7 @@ enum Command: CaseIterable, Assemblable {
                 [.regAOut, .displayIn]
             ]
 
-        case .LoadImmediate: Self.argumentFetch8 + [
+        case .SetA: Self.argumentFetch8 + [
                 [.argumentLOut, .regAIn]
             ]
 
@@ -218,7 +218,7 @@ enum Command: CaseIterable, Assemblable {
              let .Store(location):
             bytes += try location.bytes(with: parseState)
 
-        case let .LoadImmediate(number):
+        case let .SetA(number):
             bytes += [number]
 
         case let .Calculate(operation):
