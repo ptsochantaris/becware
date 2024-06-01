@@ -116,10 +116,10 @@ void commitCurrentByte(WiFiClient client) {
 
   address++;
 
-  delayMicroseconds(10);
   digitalWrite(commitBytePin, 1);
-  delayMicroseconds(10);
+  delayMicroseconds(1);
   digitalWrite(commitBytePin, 0);
+  delayMicroseconds(1);
 }
 
 void commitBit(bool on, WiFiClient client) {

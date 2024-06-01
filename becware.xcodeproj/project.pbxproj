@@ -39,8 +39,8 @@
 		16434B0B2BAF68D20025F16B /* becware */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = becware; sourceTree = BUILT_PRODUCTS_DIR; };
 		16434B0E2BAF68D20025F16B /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		1670309E2C0B179C008E4DDB /* OutputStream+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OutputStream+Extensions.swift"; sourceTree = "<group>"; };
-		167030A12C0BA0AB008E4DDB /* becwriter.ino */ = {isa = PBXFileReference; lastKnownFileType = text; path = becwriter.ino; sourceTree = "<group>"; };
 		167030A22C0BA152008E4DDB /* Assembler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Assembler.swift; sourceTree = "<group>"; };
+		167030A62C0BDE2D008E4DDB /* becwriter.ino */ = {isa = PBXFileReference; lastKnownFileType = text; path = becwriter.ino; sourceTree = "<group>"; };
 		167EBEAA2C0A6F7300A8E27F /* becware.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = becware.entitlements; sourceTree = "<group>"; };
 		169E7CF62BFBE36B00EB541B /* InstructionBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstructionBuilder.swift; sourceTree = "<group>"; };
 		169E7CF82BFBE39800EB541B /* Command.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Command.swift; sourceTree = "<group>"; };
@@ -69,6 +69,7 @@
 		16434B022BAF68D20025F16B = {
 			isa = PBXGroup;
 			children = (
+				167030A72C0BDE2D008E4DDB /* becwriter */,
 				16434B0D2BAF68D20025F16B /* becware */,
 				16434B0C2BAF68D20025F16B /* Products */,
 				16E299F22C0A76B700A596BF /* Frameworks */,
@@ -86,7 +87,6 @@
 		16434B0D2BAF68D20025F16B /* becware */ = {
 			isa = PBXGroup;
 			children = (
-				167030A02C0BA090008E4DDB /* Programmer */,
 				167EBEAA2C0A6F7300A8E27F /* becware.entitlements */,
 				169E7D0F2BFBEB8E00EB541B /* Assembly */,
 				169E7D0E2BFBEB8900EB541B /* Firmware */,
@@ -96,12 +96,13 @@
 			path = becware;
 			sourceTree = "<group>";
 		};
-		167030A02C0BA090008E4DDB /* Programmer */ = {
+		167030A72C0BDE2D008E4DDB /* becwriter */ = {
 			isa = PBXGroup;
 			children = (
-				167030A12C0BA0AB008E4DDB /* becwriter.ino */,
+				167030A62C0BDE2D008E4DDB /* becwriter.ino */,
 			);
-			path = Programmer;
+			name = becwriter;
+			path = becware/becwriter;
 			sourceTree = "<group>";
 		};
 		169E7D0E2BFBEB8900EB541B /* Firmware */ = {
