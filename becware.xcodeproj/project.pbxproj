@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		16434B0F2BAF68D20025F16B /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16434B0E2BAF68D20025F16B /* main.swift */; };
+		1670309F2C0B179C008E4DDB /* OutputStream+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1670309E2C0B179C008E4DDB /* OutputStream+Extensions.swift */; };
+		167030A32C0BA152008E4DDB /* Assembler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167030A22C0BA152008E4DDB /* Assembler.swift */; };
 		169E7CF72BFBE36B00EB541B /* InstructionBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 169E7CF62BFBE36B00EB541B /* InstructionBuilder.swift */; };
 		169E7CF92BFBE39800EB541B /* Command.swift in Sources */ = {isa = PBXBuildFile; fileRef = 169E7CF82BFBE39800EB541B /* Command.swift */; };
 		169E7CFB2BFBE3B100EB541B /* Signal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 169E7CFA2BFBE3B100EB541B /* Signal.swift */; };
@@ -36,6 +38,9 @@
 /* Begin PBXFileReference section */
 		16434B0B2BAF68D20025F16B /* becware */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = becware; sourceTree = BUILT_PRODUCTS_DIR; };
 		16434B0E2BAF68D20025F16B /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		1670309E2C0B179C008E4DDB /* OutputStream+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OutputStream+Extensions.swift"; sourceTree = "<group>"; };
+		167030A12C0BA0AB008E4DDB /* becwriter.ino */ = {isa = PBXFileReference; lastKnownFileType = text; path = becwriter.ino; sourceTree = "<group>"; };
+		167030A22C0BA152008E4DDB /* Assembler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Assembler.swift; sourceTree = "<group>"; };
 		167EBEAA2C0A6F7300A8E27F /* becware.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = becware.entitlements; sourceTree = "<group>"; };
 		169E7CF62BFBE36B00EB541B /* InstructionBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstructionBuilder.swift; sourceTree = "<group>"; };
 		169E7CF82BFBE39800EB541B /* Command.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Command.swift; sourceTree = "<group>"; };
@@ -81,6 +86,7 @@
 		16434B0D2BAF68D20025F16B /* becware */ = {
 			isa = PBXGroup;
 			children = (
+				167030A02C0BA090008E4DDB /* Programmer */,
 				167EBEAA2C0A6F7300A8E27F /* becware.entitlements */,
 				169E7D0F2BFBEB8E00EB541B /* Assembly */,
 				169E7D0E2BFBEB8900EB541B /* Firmware */,
@@ -90,6 +96,14 @@
 			path = becware;
 			sourceTree = "<group>";
 		};
+		167030A02C0BA090008E4DDB /* Programmer */ = {
+			isa = PBXGroup;
+			children = (
+				167030A12C0BA0AB008E4DDB /* becwriter.ino */,
+			);
+			path = Programmer;
+			sourceTree = "<group>";
+		};
 		169E7D0E2BFBEB8900EB541B /* Firmware */ = {
 			isa = PBXGroup;
 			children = (
@@ -97,6 +111,7 @@
 				169E7D0C2BFBE76200EB541B /* Firmware.swift */,
 				169E7D082BFBE48000EB541B /* Flag.swift */,
 				169E7CFA2BFBE3B100EB541B /* Signal.swift */,
+				1670309E2C0B179C008E4DDB /* OutputStream+Extensions.swift */,
 			);
 			path = Firmware;
 			sourceTree = "<group>";
@@ -110,6 +125,7 @@
 				169E7D042BFBE42B00EB541B /* Label.swift */,
 				169E7D022BFBE41E00EB541B /* Org.swift */,
 				169E7D002BFBE40400EB541B /* ParseState.swift */,
+				167030A22C0BA152008E4DDB /* Assembler.swift */,
 			);
 			path = Assembly;
 			sourceTree = "<group>";
@@ -185,9 +201,11 @@
 			files = (
 				169E7CF72BFBE36B00EB541B /* InstructionBuilder.swift in Sources */,
 				16434B0F2BAF68D20025F16B /* main.swift in Sources */,
+				167030A32C0BA152008E4DDB /* Assembler.swift in Sources */,
 				169E7CFD2BFBE3D600EB541B /* Assemblable.swift in Sources */,
 				169E7CF92BFBE39800EB541B /* Command.swift in Sources */,
 				169E7D032BFBE41E00EB541B /* Org.swift in Sources */,
+				1670309F2C0B179C008E4DDB /* OutputStream+Extensions.swift in Sources */,
 				169E7D112BFBEBFC00EB541B /* Globals.swift in Sources */,
 				169E7D0D2BFBE76200EB541B /* Firmware.swift in Sources */,
 				169E7D092BFBE48000EB541B /* Flag.swift in Sources */,

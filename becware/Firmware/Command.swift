@@ -103,7 +103,7 @@ enum Command: CaseIterable, Assemblable {
         }
     }
 
-    var expectedLength: UInt16 {
+    var expectedLength: Int {
         switch self {
         case .Jump, .JumpOnCarry, .JumpOnZero, .LoadA, .LoadB, .Store:
             3
@@ -232,7 +232,7 @@ enum Command: CaseIterable, Assemblable {
         throw "Command \(name) requires a parameter"
     }
 
-    func updatedOrg(from original: UInt16) -> UInt16 {
+    func updatedOrg(from original: Int) -> Int {
         original + expectedLength
     }
 }

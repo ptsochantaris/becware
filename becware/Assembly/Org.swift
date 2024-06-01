@@ -7,7 +7,7 @@ struct Org: Assemblable {
         self.org = org
     }
 
-    func updatedOrg(from _: UInt16) -> UInt16 {
-        org
+    func updatedOrg(from _: Int) -> Int {
+        Int(org)
     }
 }

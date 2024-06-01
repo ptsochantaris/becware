@@ -2,7 +2,7 @@ import Foundation
 
 protocol Assemblable {
     var label: String? { get }
-    func updatedOrg(from original: UInt16) -> UInt16
+    func updatedOrg(from original: Int) -> Int
     func bytes(with parseState: ParseState) throws -> [UInt8]
 }
 
@@ -15,7 +15,7 @@ extension Assemblable {
         []
     }
 
-    func updatedOrg(from original: UInt16) -> UInt16 {
+    func updatedOrg(from original: Int) -> Int {
         original
     }
 }

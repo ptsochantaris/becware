@@ -1,11 +1,9 @@
 import Foundation
 
-let firmware = Firmware()
-
-firmware.build()
+Firmware.build()
 
 do {
-    try await firmware.assemble(to: "192.168.1.236", port: 80) {
+    try await Assembler.assemble(to: "192.168.1.236", port: 80) {
         Org(0)
 
         Command.LoadA(from: .label("startValue"))
@@ -28,7 +26,7 @@ do {
         Content(bytes: [1])
 
         Label("startValue")
-        Content(bytes: [0])
+        Content(bytes: [254])
     }
 } catch {
     print("Assembly error: \(error.localizedDescription)")
