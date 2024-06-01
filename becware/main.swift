@@ -5,7 +5,7 @@ let firmware = Firmware()
 firmware.build()
 
 do {
-    try firmware.assemble(to: "assembled.bin") {
+    try await firmware.assemble(to: "192.168.1.236", port: 80) {
         Org(0)
 
         Command.LoadA(from: .label("startValue"))

@@ -36,6 +36,7 @@
 /* Begin PBXFileReference section */
 		16434B0B2BAF68D20025F16B /* becware */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = becware; sourceTree = BUILT_PRODUCTS_DIR; };
 		16434B0E2BAF68D20025F16B /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		167EBEAA2C0A6F7300A8E27F /* becware.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = becware.entitlements; sourceTree = "<group>"; };
 		169E7CF62BFBE36B00EB541B /* InstructionBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstructionBuilder.swift; sourceTree = "<group>"; };
 		169E7CF82BFBE39800EB541B /* Command.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Command.swift; sourceTree = "<group>"; };
 		169E7CFA2BFBE3B100EB541B /* Signal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Signal.swift; sourceTree = "<group>"; };
@@ -65,6 +66,7 @@
 			children = (
 				16434B0D2BAF68D20025F16B /* becware */,
 				16434B0C2BAF68D20025F16B /* Products */,
+				16E299F22C0A76B700A596BF /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -79,6 +81,7 @@
 		16434B0D2BAF68D20025F16B /* becware */ = {
 			isa = PBXGroup;
 			children = (
+				167EBEAA2C0A6F7300A8E27F /* becware.entitlements */,
 				169E7D0F2BFBEB8E00EB541B /* Assembly */,
 				169E7D0E2BFBEB8900EB541B /* Firmware */,
 				16434B0E2BAF68D20025F16B /* main.swift */,
@@ -111,6 +114,13 @@
 			path = Assembly;
 			sourceTree = "<group>";
 		};
+		16E299F22C0A76B700A596BF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -127,6 +137,8 @@
 			dependencies = (
 			);
 			name = becware;
+			packageProductDependencies = (
+			);
 			productName = becware;
 			productReference = 16434B0B2BAF68D20025F16B /* becware */;
 			productType = "com.apple.product-type.tool";
@@ -155,6 +167,8 @@
 				Base,
 			);
 			mainGroup = 16434B022BAF68D20025F16B;
+			packageReferences = (
+			);
 			productRefGroup = 16434B0C2BAF68D20025F16B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -310,12 +324,14 @@
 		16434B132BAF68D20025F16B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CODE_SIGN_ENTITLEMENTS = becware/becware.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = X727JSJUGJ;
-				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_HARDENED_RUNTIME = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
@@ -323,12 +339,14 @@
 		16434B142BAF68D20025F16B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CODE_SIGN_ENTITLEMENTS = becware/becware.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = X727JSJUGJ;
-				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_HARDENED_RUNTIME = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;

@@ -1,5 +1,7 @@
 import Foundation
 
+extension OutputStream: @unchecked Sendable {}
+
 final class Firmware {
     private func bytes(for steps: [Signal]) -> (UInt8, UInt8, UInt8) {
         var firstByte: UInt8 = 0
@@ -62,7 +64,7 @@ final class Firmware {
                     print(formatted(data1[address], radix: 2, max: 8), terminator: "  ")
                     print(formatted(data2[address], radix: 2, max: 8), terminator: "  ")
                     print(formatted(data3[address], radix: 2, max: 8), terminator: " - ")
-                    print(stepBlock.element.map { $0.rawValue }.joined(separator: ", "))
+                    print(stepBlock.element.map(\.rawValue).joined(separator: ", "))
                 }
             }
 
@@ -95,7 +97,106 @@ final class Firmware {
         print()
     }
 
+    func assemble(to host: String, port: Int, @InstructionBuilder opcodeBlock: () -> [Assemblable]) async throws {
+        let bytes = try assemble(opcodeBlock: opcodeBlock)
+        let formattedBytes = bytes.map { formatted($0, radix: 16, max: 2).uppercased() }.joined(separator: " ") + "\n"
+        print("Sending assembled bytes to \(host):\(port)… ", terminator: "")
+
+        var inputStream: InputStream?
+        var outputStream: OutputStream?
+        Stream.getStreamsToHost(withName: host, port: port, inputStream: &inputStream, outputStream: &outputStream)
+        guard let inputStream, let outputStream else {
+            print("Error: Could not create streams")
+            return
+        }
+        inputStream.open()
+        defer {
+            inputStream.close()
+        }
+
+        var ready = false
+        while !ready {
+            switch inputStream.streamStatus {
+            case .notOpen:
+                print("Not open")
+            case .opening:
+                print("Connecting", terminator: "… ")
+            case .open:
+                print("Connected", terminator: "… ")
+                ready = true
+            case .reading:
+                print("Reading")
+            case .writing:
+                print("Writing")
+            case .atEnd:
+                print("At End")
+            case .closed:
+                print("Closed")
+            case .error:
+                print("Error Connecting")
+                return
+            @unknown default:
+                fatalError()
+            }
+            try? await Task.sleep(for: .seconds(1))
+        }
+
+        let readyBytes = malloc(8)!
+        var count = 0
+        while count < 8 {
+            count += inputStream.read(readyBytes, maxLength: 8 - count) // ready line
+        }
+        let readyMessage = String(unsafeUninitializedCapacity: 8) { buffer in
+            memcpy(buffer.baseAddress!, readyBytes, 8)
+            return 8
+        }
+        if readyMessage == "\nREADY> " {
+            print("Got ready state", terminator: "… ")
+        } else {
+            print("Error: Did not get READY header")
+            return
+        }
+
+        Task { [outputStream] in
+            let formattedData = formattedBytes.data(using: .ascii)!
+            formattedData.withUnsafeBytes { buffer in
+                outputStream.open()
+                print("Sending \(formattedData.count) bytes.")
+                var offset = 0
+                while offset < formattedData.count {
+                    offset += outputStream.write(buffer.baseAddress!, maxLength: formattedData.count - offset)
+                }
+                outputStream.close()
+            }
+        }
+
+        while true {
+            let text = String(unsafeUninitializedCapacity: 1024) { buf in
+                inputStream.read(buf.baseAddress!, maxLength: 1024)
+            }
+            if text.count == 0 {
+                break
+            }
+            print(text, terminator: "")
+            if text.contains(">") {
+                break
+            }
+        }
+        print()
+        print()
+        print("Done")
+        print()
+    }
+
     func assemble(to file: String, @InstructionBuilder opcodeBlock: () -> [Assemblable]) throws {
+        let bytes = try assemble(opcodeBlock: opcodeBlock)
+        print("Writing assembled bytes… ", terminator: "")
+        try bytes.write(to: home.appendingPathComponent(file))
+        print("Done")
+        print()
+    }
+
+    func assemble(@InstructionBuilder opcodeBlock: () -> [Assemblable]) throws -> Data {
         print("Assembling: ")
         print()
 
@@ -146,9 +247,6 @@ final class Firmware {
 
         print()
         print()
-        print("Writing assembled bytes… ", terminator: "")
-        try bytes.write(to: home.appendingPathComponent(file))
-        print("Done")
-        print()
+        return bytes
     }
 }
