@@ -22,6 +22,7 @@ enum Assembler {
 
         var ready = false
         while !ready {
+            try? await Task.sleep(for: .seconds(0.5))
             switch inputStream.streamStatus {
             case .notOpen:
                 print("Not open")
@@ -44,7 +45,6 @@ enum Assembler {
             @unknown default:
                 fatalError()
             }
-            try? await Task.sleep(for: .seconds(1))
         }
 
         let readyBytes = malloc(8)!

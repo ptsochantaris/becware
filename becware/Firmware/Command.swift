@@ -135,6 +135,18 @@ enum Command: CaseIterable, Assemblable {
         [.ramOut, .argumentLIn, .counterIncrement]
     ]
 
+    private static let jumpSignals: [[Signal]] = [
+        [.addressHIn, .argumentHOut],
+        [.addressLIn, .argumentLOut],
+        [.argumentHOut, .counterHIn],
+        [.argumentLOut, .counterLIn]
+    ]
+
+    private static let skipArguments: [[Signal]] = [
+        [.counterIncrement],
+        [.counterIncrement]
+    ]
+
     private func specificSteps(for flags: Flag) -> [[Signal]] {
         switch self {
         case .NoOp: []
@@ -174,28 +186,13 @@ enum Command: CaseIterable, Assemblable {
                 [.regAOut, .ramIn]
             ]
 
-        case .Jump: Self.argumentFetch16 + [
-                [.addressHIn, .argumentHOut],
-                [.addressLIn, .argumentLOut],
-                [.argumentHOut, .counterHIn],
-                [.argumentLOut, .counterLIn]
-            ]
+        case .Jump: Self.argumentFetch16 + Self.jumpSignals
 
         case .JumpOnCarry:
-            flags.contains(.carry) ? Self.argumentFetch16 + [
-                [.addressHIn, .argumentHOut],
-                [.addressLIn, .argumentLOut],
-                [.argumentHOut, .counterHIn],
-                [.argumentLOut, .counterLIn]
-            ] : []
+            flags.contains(.carry) ? (Self.argumentFetch16 + Self.jumpSignals) : Self.skipArguments
 
         case .JumpOnZero:
-            flags.contains(.zero) ? Self.argumentFetch16 + [
-                [.addressHIn, .argumentHOut],
-                [.addressLIn, .argumentLOut],
-                [.argumentHOut, .counterHIn],
-                [.argumentLOut, .counterLIn]
-            ] : []
+            flags.contains(.zero) ? (Self.argumentFetch16 + Self.jumpSignals) : Self.skipArguments
         }
     }
 
