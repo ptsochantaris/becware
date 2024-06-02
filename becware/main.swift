@@ -26,7 +26,7 @@ do {
         Content(bytes: [1])
 
         Label("startValue")
-        Content(bytes: [254])
+        Content(bytes: [0])
     }
 } catch {
     print("Assembly error: \(error.localizedDescription)")

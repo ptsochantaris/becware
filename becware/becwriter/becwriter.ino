@@ -1,5 +1,7 @@
 #include "ESP8266WiFi.h"
- 
+
+//#define LOG
+
 const char* ssid = "SSID";
 const char* password = "PASSWORD";
 WiFiServer wifiServer(80);
@@ -9,15 +11,9 @@ int gatePin = 15;
 int clockPin = 4;
 int dataPin = 5;
 
-bool nibbleCount = 0;
-uint8_t currentByte = 0;
-uint16_t address = 0;
 char outbuf[1024];
 
 void pinReset() {
-  nibbleCount = 0;
-  address = 0;
-
   digitalWrite(clockPin, 0);
   pinMode(clockPin, OUTPUT);
 
@@ -31,130 +27,120 @@ void pinReset() {
   pinMode(commitBytePin, OUTPUT);
 }
 
-
-void reset(WiFiClient client) {
+void setup() {
   pinReset();
-  delay(100);
-  client.print("\nREADY> ");
-}
 
-void wifiSetup() {
+#ifdef LOG
+  Serial.begin(115200);
+  Serial.print("\n\nBooting");
+#endif
+
   WiFi.begin(ssid, password);
  
   while (WiFi.status() != WL_CONNECTED) {
-    delay(1000);
+    delay(500);
+#ifdef LOG
     Serial.println("Connecting...");
+#endif
   }
  
+#ifdef LOG
   Serial.print("Connected to WiFi IP: ");
   Serial.println(WiFi.localIP());
+#endif
  
   wifiServer.begin();
 }
 
-void setup() {
-  pinReset();
-
-  Serial.begin(115200);
-  Serial.print("\n\nBooting");
-
-  wifiSetup();
+void commitBit(bool on) {
+  digitalWrite(dataPin, on);
+  digitalWrite(clockPin, HIGH);
+  digitalWrite(clockPin, LOW);
 }
 
-uint8_t getNextNibble(WiFiClient client) {
-  while(client.connected()) {
-    if (client.available() > 0) {
-      uint8_t next = client.read();
-      if (next >= '0' && next <= '9') {
-        return next - '0';
-      }
-      if (next >= 'A' && next <= 'F') {
-        return 10 + next - 'A';
-      }
-      if (next >= 'a' && next <= 'f') {
-        return 10 + next - 'a';
-      }
-      if (next == '\n') {
-        return 0xFF;
-      }
-    }
-  }
-  return 0xFE;
-}
-
-void commitCurrentByte(WiFiClient client) {
-  if(address==0) {
-    digitalWrite(clockPin, 0);
-    digitalWrite(dataPin, 0);
-    digitalWrite(commitBytePin, 0);
+void commitByte(uint8_t byte, uint16_t location, WiFiClient client) {
+  if(location==0) {
     digitalWrite(gatePin, 0);
-
-    client.println("----------------------------- Started");
-    delay(100);
+    delay(1);
   }
 
-  int byte = address;
-  sprintf(outbuf, "                :          | %04X: [%02X]\n", address, currentByte);
+  sprintf(outbuf, "                :          | %04X: [%02X]\n", location, byte);
 
   for(int f=0;f<16;f++) {
-    bool on = byte & 0b1000000000000000;
-    byte <<= 1;
-    commitBit(on, client);
+    bool on = location & 0b1000000000000000;
+    location <<= 1;
     outbuf[f] = on ? '1' : '0';
+    commitBit(on);
   }
-
-  byte = currentByte;
 
   for(int f=0;f<8;f++) {
     bool on = byte & 0b10000000;
     byte <<= 1;
-    commitBit(on, client);
     outbuf[f+18] = on ? '1' : '0';
+    commitBit(on);
   }
 
-  client.print(outbuf);
-
-  address++;
-
   digitalWrite(commitBytePin, 1);
+  client.print(outbuf);
   delayMicroseconds(1);
   digitalWrite(commitBytePin, 0);
   delayMicroseconds(1);
 }
 
-void commitBit(bool on, WiFiClient client) {
-  digitalWrite(dataPin, on);
-  digitalWrite(clockPin, 1);
-  delayMicroseconds(1);
-  digitalWrite(clockPin, 0);
-}
+bool handleClientSession(WiFiClient client) {
+  uint8_t currentByte = 0;
+  uint16_t address = 0;
+  bool nibbleCount = false;
 
-void loop() {
-  WiFiClient client = wifiServer.available();
- 
-  if (client) { 
-    Serial.println("Client connected");
-    reset(client);
-    while(client.connected()) {
-      uint8_t next = getNextNibble(client);
+  pinReset();
+  client.print("\nREADY> ");
 
-      if(next==0xFE) {
-        client.stop();
-        Serial.println("Client disconnected");
-        reset(client);
+  while(client.connected()) {
+    while(client.available() > 0) {
+      uint8_t next = client.read();
+      if (next >= '0' && next <= '9') {
+        next -= 48;
 
-      } else if(next==0xFF) {
-        reset(client);
+      } else if (next >= 'A' && next <= 'F') {
+        next -= 55;
 
-      } else if(nibbleCount == 0) {
+      } else if (next >= 'a' && next <= 'f') {
+        next -= 87;
+
+      } else if(next=='\n') {
+        return true;
+
+      } else {
+        continue;
+      }
+      
+      if(nibbleCount == 0) {
         currentByte = next << 4;
         nibbleCount = 1;
 
       } else {
         currentByte |= next;
         nibbleCount = 0;
-        commitCurrentByte(client);    
+        commitByte(currentByte, address, client);
+        address++;
       }
     }
+  }
+  client.stop();
+  return false;
+}
+
+void loop() {
+  if (WiFiClient client = wifiServer.available()) { 
+#ifdef LOG
+    Serial.println("Client connected");
+#endif
+    bool connected = true;
+    while(connected) {
+      connected = handleClientSession(client);
+    }
+#ifdef LOG
+    Serial.println("Client disconnected");
+#endif
   }
 }
