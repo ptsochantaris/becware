@@ -75,19 +75,19 @@ enum Firmware {
         }
 
         /*
-        for index in stride(from: 0, to: total, by: 8) {
-            print(formatted(index, radix: 2, max: bits), terminator: ": ")
+         for index in stride(from: 0, to: total, by: 8) {
+             print(formatted(index, radix: 2, max: bits), terminator: ": ")
 
-            for array in [data1, data2, data3, data4] {
-                for i in index ..< index + 8 {
-                    print(formatted(array[i], radix: 16, max: 2), terminator: " ")
-                }
-                print(" ", terminator: "")
-            }
+             for array in [data1, data2, data3, data4] {
+                 for i in index ..< index + 8 {
+                     print(formatted(array[i], radix: 16, max: 2), terminator: " ")
+                 }
+                 print(" ", terminator: "")
+             }
 
-            print()
-        }
-         */
+             print()
+         }
+          */
 
         print()
         print("Writing data files… ", terminator: "")

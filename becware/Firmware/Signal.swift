@@ -48,7 +48,6 @@ enum Signal: String {
         case .ramOut: .one(5)
         case .argumentLIn: .one(6)
         case .argumentLOut: .one(7)
-
         case .calcOut: .two(0)
         case .calcIn: .two(1)
         case .argumentHIn: .two(2)
@@ -57,7 +56,6 @@ enum Signal: String {
         case .displaySelect: .two(5)
         case .counterIncrement: .two(6)
         case .nextCommand: .two(7)
-
         case .counterHIn: .three(0)
         case .counterHOut: .three(1)
         case .counterLIn: .three(2)
@@ -66,15 +64,14 @@ enum Signal: String {
         case .regAOut: .three(5)
         case .regBIn: .three(6)
         case .flagsIn: .three(7)
-
-        case .regCIn: .three(0)
-        case .regCOut: .three(1)
-        case .regDIn: .three(2)
-        case .regDOut: .three(3)
-        case .regEIn: .three(4)
-        case .regEOut: .three(5)
-        case .stackIncrement: .three(6)
-        case .stackDecrement: .three(7)
+        case .regCIn: .four(0)
+        case .regCOut: .four(1)
+        case .regDIn: .four(2)
+        case .regDOut: .four(3)
+        case .regEIn: .four(4)
+        case .regEOut: .four(5)
+        case .stackIncrement: .four(6)
+        case .stackDecrement: .four(7)
         }
     }
 }

@@ -54,9 +54,9 @@ void setup() {
 
 void commitBit(bool on) {
   digitalWrite(dataPin, on);
-  delayMicroseconds(1);
+  delayMicroseconds(10);
   digitalWrite(clockPin, HIGH);
-  delayMicroseconds(1);
+  delayMicroseconds(10);
   digitalWrite(clockPin, LOW);
 }
 

@@ -2,7 +2,7 @@ import Foundation
 
 extension UInt16 {
     var bytes: [UInt8] {
-        [UInt8(self & 0xFF), UInt8(self >> 8)]
+        [UInt8(self >> 8), UInt8(self & 0xFF)]
     }
 }
 
@@ -76,18 +76,18 @@ enum Command: CaseIterable, Assemblable {
             LoadA(from: .address(0)),
             StoreA(to: .address(0)),
             SetA(number: 0),
-            
+
             SetBFromA,
             SetAFromC, SetCFromA, SwapAC,
             SetAFromD, SetDFromA, SwapAD,
             SetAFromE, SetEFromA,
 
             Calculate(using: .addition),
-            
+
             Jump(to: .address(0)),
             JumpOnCarry(to: .address(0)),
             JumpOnZero(to: .address(0)),
-            
+
             OutCommand, Out,
 
             PushA, PopA,
@@ -98,40 +98,30 @@ enum Command: CaseIterable, Assemblable {
 
     var byte: UInt8 {
         switch self {
-        case .NoOp: 0
-        case .LoadA: 1
-        case .StoreA: 2
-        case .SetA: 3
-
-        case .SetBFromA: 4
-        
-        case .SetAFromC: 5
-        case .SetCFromA: 6
-        case .SwapAC: 7
-
-        case .SetAFromD: 8
-        case .SetDFromA: 9
-        case .SwapAD: 10
-
-        case .SetAFromE: 11
-        case .SetEFromA: 12
-
-        case .Calculate: 13
-
-        case .Jump: 14
-        case .JumpOnCarry: 15
-        case .JumpOnZero: 16
-
-        case .OutCommand: 17
-        case .Out: 18
-
-        case .PushA: 19
-        case .PopA: 20
-
-        case .PushE: 21
-        case .PopE: 22
-
-        case .Halt: 23
+        case .NoOp: 0x0
+        case .LoadA: 0x1
+        case .StoreA: 0x2
+        case .SetA: 0x3
+        case .SetBFromA: 0x4
+        case .SetAFromC: 0x5
+        case .SetCFromA: 0x6
+        case .SwapAC: 0x7
+        case .SetAFromD: 0x8
+        case .SetDFromA: 0x9
+        case .SwapAD: 0xA
+        case .SetAFromE: 0xB
+        case .SetEFromA: 0xC
+        case .Calculate: 0xD
+        case .Jump: 0xE
+        case .JumpOnCarry: 0xF
+        case .JumpOnZero: 0x10
+        case .OutCommand: 0x11
+        case .Out: 0x12
+        case .PushA: 0x13
+        case .PopA: 0x14
+        case .PushE: 0x15
+        case .PopE: 0x16
+        case .Halt: 0x17
         }
     }
 
@@ -141,34 +131,25 @@ enum Command: CaseIterable, Assemblable {
         case .LoadA: "Load A"
         case .StoreA: "Store A"
         case .SetA: "Set A"
-
         case .SetBFromA: "Copy A → B"
-
         case .SetAFromC: "Copy C → A"
         case .SetCFromA: "Copy A → C"
         case .SwapAC: "Swap A ↔ C"
-
         case .SetAFromD: "Copy D → A"
         case .SetDFromA: "Copy A → D"
         case .SwapAD: "Swap A ↔ D"
-
         case .SetAFromE: "Copy E → A"
         case .SetEFromA: "Copy A → E"
-
         case .Calculate: "Calculate"
-
         case .Jump: "Jump"
         case .JumpOnCarry: "Jump On Carry"
         case .JumpOnZero: "Jump On Zero"
-
         case .OutCommand: "Out Register Select"
         case .Out: "Out Data"
-
         case .PushA: "Push A"
         case .PopA: "Pop A"
         case .PushE: "Push E"
         case .PopE: "Pop E"
-
         case .Halt: "Halt"
         }
     }
@@ -179,7 +160,7 @@ enum Command: CaseIterable, Assemblable {
             3
         case .Calculate, .SetA:
             2
-        case .Halt, .NoOp, .Out, .OutCommand, .SetAFromC, .SetAFromD, .SetAFromE, .SetBFromA, .SetCFromA, .SetDFromA, .SetEFromA, .PushA, .PopA, .SwapAC, .SwapAD, .PushE, .PopE:
+        case .Halt, .NoOp, .Out, .OutCommand, .PopA, .PopE, .PushA, .PushE, .SetAFromC, .SetAFromD, .SetAFromE, .SetBFromA, .SetCFromA, .SetDFromA, .SetEFromA, .SwapAC, .SwapAD:
             1
         }
     }
@@ -220,107 +201,107 @@ enum Command: CaseIterable, Assemblable {
     private func specificSteps(for flags: Flag) -> [[Signal]] {
         switch self {
         case .NoOp: []
-            
+
         case .LoadA: Self.fetch16bitArgument + [
-            [.addressHIn, .argumentHOut],
-            [.addressLIn, .argumentLOut],
-            [.ramOut, .regAIn]
-        ]
-            
+                [.addressHIn, .argumentHOut],
+                [.addressLIn, .argumentLOut],
+                [.ramOut, .regAIn]
+            ]
+
         case .Calculate: Self.fetch8bitArgument + [
-            [.calcIn, .argumentLOut],
-            [.regAIn, .calcOut, .flagsIn]
-        ]
-            
+                [.calcIn, .argumentLOut],
+                [.regAIn, .calcOut, .flagsIn]
+            ]
+
         case .Out: [
-            [.regAOut, .displayIn, .displaySelect]
-        ]
-            
+                [.regAOut, .displayIn, .displaySelect]
+            ]
+
         case .OutCommand: [
-            [.regAOut, .displayIn]
-        ]
-            
+                [.regAOut, .displayIn]
+            ]
+
         case .SetA: Self.fetch8bitArgument + [
-            [.argumentLOut, .regAIn]
-        ]
-            
+                [.argumentLOut, .regAIn]
+            ]
+
         case .Halt: [
-            [.halt]
-        ]
-            
+                [.halt]
+            ]
+
         case .StoreA: Self.fetch16bitArgument + [
-            [.addressHIn, .argumentHOut],
-            [.addressLIn, .argumentLOut],
-            [.regAOut, .ramIn]
-        ]
-            
+                [.addressHIn, .argumentHOut],
+                [.addressLIn, .argumentLOut],
+                [.regAOut, .ramIn]
+            ]
+
         case .Jump: Self.fetch16bitArgument + Self.jumpSignals
-            
+
         case .JumpOnCarry:
             flags.contains(.carry) ? (Self.fetch16bitArgument + Self.jumpSignals) : Self.skipArguments
-            
+
         case .JumpOnZero:
             flags.contains(.zero) ? (Self.fetch16bitArgument + Self.jumpSignals) : Self.skipArguments
-            
+
         case .SetBFromA: [
-            [.regAOut, .regBIn]
-        ]
-            
+                [.regAOut, .regBIn]
+            ]
+
         case .SetAFromC: [
-            [.regCOut, .regAIn]
-        ]
-            
+                [.regCOut, .regAIn]
+            ]
+
         case .SwapAC: [
-            [.regAOut, .regEIn],
-            [.regCOut, .regAIn],
-            [.regEOut, .regCIn]
-        ]
-            
+                [.regAOut, .regEIn],
+                [.regCOut, .regAIn],
+                [.regEOut, .regCIn]
+            ]
+
         case .SwapAD: [
-            [.regAOut, .regEIn],
-            [.regDOut, .regAIn],
-            [.regEOut, .regDIn]
-        ]
-            
+                [.regAOut, .regEIn],
+                [.regDOut, .regAIn],
+                [.regEOut, .regDIn]
+            ]
+
         case .SetCFromA: [
-            [.regAOut, .regCIn]
-        ]
-            
+                [.regAOut, .regCIn]
+            ]
+
         case .SetAFromD: [
-            [.regDOut, .regAIn]
-        ]
-            
+                [.regDOut, .regAIn]
+            ]
+
         case .SetDFromA: [
-            [.regAOut, .regDIn]
-        ]
-            
+                [.regAOut, .regDIn]
+            ]
+
         case .SetAFromE: [
-            [.regEOut, .regAIn]
-        ]
-            
+                [.regEOut, .regAIn]
+            ]
+
         case .SetEFromA: [
-            [.regAOut, .regEIn]
-        ]
-            
+                [.regAOut, .regEIn]
+            ]
+
         case .PushA: [
-            [.regAOut, .stackDecrement]
-            // TODO
-        ]
-            
+                [.regAOut, .stackDecrement]
+                // TODO:
+            ]
+
         case .PopA: [
-            [.regAIn, .stackIncrement]
-            // TODO
-        ]
-            
+                [.regAIn, .stackIncrement]
+                // TODO:
+            ]
+
         case .PushE: [
-            [.regEOut, .stackDecrement]
-            // TODO
-        ]
-            
+                [.regEOut, .stackDecrement]
+                // TODO:
+            ]
+
         case .PopE: [
-            [.regEIn, .stackIncrement]
-            // TODO
-        ]
+                [.regEIn, .stackIncrement]
+                // TODO:
+            ]
         }
     }
 
@@ -334,7 +315,7 @@ enum Command: CaseIterable, Assemblable {
         var bytes = [byte]
 
         switch self {
-        case .Halt, .NoOp, .Out, .OutCommand, .SetAFromC, .SwapAC, .SetAFromD, .SwapAD, .SetAFromE, .SetBFromA, .SetCFromA, .SetDFromA, .SetEFromA, .PushA, .PopA, .PushE, .PopE: break
+        case .Halt, .NoOp, .Out, .OutCommand, .PopA, .PopE, .PushA, .PushE, .SetAFromC, .SetAFromD, .SetAFromE, .SetBFromA, .SetCFromA, .SetDFromA, .SetEFromA, .SwapAC, .SwapAD: break
 
         case let .Jump(location),
              let .JumpOnCarry(location),
