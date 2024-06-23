@@ -53,6 +53,7 @@ Firmware.build()
   */
 
 // Using registers
+
 do {
     try await Assembler.assemble(to: "192.168.1.236", port: 80) {
         Command.SetA(number: 1)
@@ -91,3 +92,22 @@ do {
 } catch {
     print("Assembly error: \(error.localizedDescription)")
 }
+
+/*
+ do {
+     try await Assembler.assemble(to: "192.168.1.236", port: 80) {
+         Command.SetA(number: 0b10101010)
+         Label("Loop")
+         Command.SetEFromA
+         Command.SetA(number: 0)
+         Command.SetAFromE
+         Command.Jump(to: .label("Loop"))
+
+         Command.SetA(number: 0)
+         Command.SetAFromE
+         Command.Halt
+     }
+ } catch {
+     print("Assembly error: \(error.localizedDescription)")
+ }
+ */

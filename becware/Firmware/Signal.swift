@@ -14,6 +14,7 @@ enum Signal: String {
     case regAIn
     case regAOut
     case regBIn
+    case regBOut
     case flagsIn
     case calcIn
     case calcOut
@@ -31,15 +32,25 @@ enum Signal: String {
     case regDOut
     case regEIn
     case regEOut
+    case regIIn
+    case regIOut
     case stackIncrement
     case stackDecrement
+    case stackHOut
+    case stackLOut
 
     enum Bit {
-        case one(Int), two(Int), three(Int), four(Int)
+        case zero(Int), one(Int), two(Int), three(Int), four(Int)
     }
 
     var bit: Bit {
         switch self {
+        case .regIIn: .zero(0)
+        case .regIOut: .zero(1)
+        case .stackHOut: .zero(4)
+        case .stackLOut: .zero(5)
+        case .stackIncrement: .zero(6)
+        case .stackDecrement: .zero(7)
         case .halt: .one(0)
         case .instructionIn: .one(1)
         case .addressLIn: .one(2)
@@ -63,15 +74,14 @@ enum Signal: String {
         case .regAIn: .three(4)
         case .regAOut: .three(5)
         case .regBIn: .three(6)
-        case .flagsIn: .three(7)
+        case .regBOut: .three(7)
         case .regCIn: .four(0)
         case .regCOut: .four(1)
         case .regDIn: .four(2)
         case .regDOut: .four(3)
         case .regEIn: .four(4)
         case .regEOut: .four(5)
-        case .stackIncrement: .four(6)
-        case .stackDecrement: .four(7)
+        case .flagsIn: .four(7)
         }
     }
 }
