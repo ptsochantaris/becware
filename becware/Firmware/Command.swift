@@ -45,11 +45,8 @@ enum Command: CaseIterable, Assemblable {
          SetA(number: UInt8),
 
          SetAFromB, SetBFromA, SwapAB,
-
          SetAFromC, SetCFromA, SwapAC,
-
          SetAFromD, SetDFromA, SwapAD,
-
          SetAFromE, SetEFromA, SwapAE,
 
          Calculate(using: Arithmetic),
@@ -58,14 +55,11 @@ enum Command: CaseIterable, Assemblable {
          JumpOnCarry(to: Location),
          JumpOnZero(to: Location),
 
-         OutCommand,
-         Out,
+         OutCommand, Out,
 
-         PushA,
-         PopA,
+         PushA, PopA,
 
-         Call(to: Location),
-         Return,
+         Call(to: Location), Return,
 
          Halt
 
@@ -78,10 +72,10 @@ enum Command: CaseIterable, Assemblable {
             StoreA(to: .address(0)),
             SetA(number: 0),
 
-            SetBFromA,
+            SetAFromB, SetBFromA, SwapAB,
             SetAFromC, SetCFromA, SwapAC,
             SetAFromD, SetDFromA, SwapAD,
-            SetAFromE, SetEFromA,
+            SetAFromE, SetEFromA, SwapAE,
 
             Calculate(using: .addition),
 
@@ -92,6 +86,8 @@ enum Command: CaseIterable, Assemblable {
             OutCommand, Out,
 
             PushA, PopA,
+
+            Call(to: .address(0)), Return,
 
             Halt
         ]
