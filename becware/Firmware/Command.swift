@@ -278,8 +278,8 @@ enum Command: CaseIterable, Assemblable {
 
         case .SwapAE: [
                 [.regAOut, .regIIn],
-                [.regCOut, .regAIn],
-                [.regIOut, .regCIn]
+                [.regEOut, .regAIn],
+                [.regIOut, .regEIn]
             ]
 
         case .SetCFromA: [
