@@ -54,9 +54,9 @@ void setup() {
 
 void commitBit(bool on) {
   digitalWrite(dataPin, on);
-  delayMicroseconds(10);
+  delayMicroseconds(100);
   digitalWrite(clockPin, HIGH);
-  delayMicroseconds(10);
+  delayMicroseconds(100);
   digitalWrite(clockPin, LOW);
 }
 
@@ -84,9 +84,9 @@ void commitByte(uint8_t byte, uint16_t location, WiFiClient client) {
 
   digitalWrite(commitBytePin, 1);
   client.print(outbuf);
-  delayMicroseconds(100);
+  delayMicroseconds(1000);
   digitalWrite(commitBytePin, 0);
-  delayMicroseconds(100);
+  delayMicroseconds(1000);
 }
 
 bool handleClientSession(WiFiClient client) {

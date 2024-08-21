@@ -34,8 +34,8 @@ enum Signal: String {
     case regEOut
     case regIIn
     case regIOut
-    case stackIncrement
-    case stackDecrement
+    case stackDirectionDown
+    case stackMove
     case stackHOut
     case stackLOut
 
@@ -49,8 +49,8 @@ enum Signal: String {
         case .regIOut: .zero(1)
         case .stackHOut: .zero(4)
         case .stackLOut: .zero(5)
-        case .stackIncrement: .zero(6)
-        case .stackDecrement: .zero(7)
+        case .stackDirectionDown: .zero(6)
+        case .stackMove: .zero(7)
         case .halt: .one(0)
         case .instructionIn: .one(1)
         case .addressLIn: .one(2)

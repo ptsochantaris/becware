@@ -303,7 +303,7 @@ enum Command: CaseIterable, Assemblable {
             ]
 
         case .PushA: [
-                [.stackDecrement],
+                [.stackDirectionDown, .stackMove],
                 [.addressHIn, .stackHOut],
                 [.addressLIn, .stackLOut],
                 [.regAOut, .ramIn],
@@ -314,16 +314,16 @@ enum Command: CaseIterable, Assemblable {
         case .PopA: [
                 [.addressHIn, .stackHOut],
                 [.addressLIn, .stackLOut],
-                [.regAIn, .ramOut, .stackIncrement],
+                [.regAIn, .ramOut, .stackMove],
                 [.addressHIn, .counterHOut],
                 [.addressLIn, .counterLOut]
             ]
 
         case .Call: Self.fetch16bitArgument + [
-                [.stackDecrement],
+                [.stackDirectionDown, .stackMove],
                 [.addressHIn, .stackHOut],
                 [.addressLIn, .stackLOut],
-                [.counterHOut, .ramIn, .stackDecrement],
+                [.counterHOut, .ramIn, .stackDirectionDown, .stackMove],
                 [.addressHIn, .stackHOut],
                 [.addressLIn, .stackLOut],
                 [.counterLOut, .ramIn],
@@ -337,10 +337,10 @@ enum Command: CaseIterable, Assemblable {
         case .Return: [
                 [.addressHIn, .stackHOut],
                 [.addressLIn, .stackLOut],
-                [.counterHIn, .ramOut, .stackIncrement],
+                [.counterHIn, .ramOut, .stackMove],
                 [.addressHIn, .stackHOut],
                 [.addressLIn, .stackLOut],
-                [.counterLIn, .ramOut, .stackIncrement]
+                [.counterLIn, .ramOut, .stackMove]
             ]
         }
     }
