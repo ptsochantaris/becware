@@ -213,7 +213,8 @@ enum Command: CaseIterable, Assemblable {
 
         case .Calculate: Self.fetch8bitArgument + [
                 [.calcIn, .argumentLOut],
-                [.regAIn, .calcOut, .flagsIn]
+                [.flagsIn],
+                [.regAIn, .calcOut]
             ]
 
         case .Out: [

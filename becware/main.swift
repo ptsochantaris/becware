@@ -9,10 +9,11 @@ Firmware.build()
 
 // Example Code to display characters on an LCD screen
 
+
 /*
  //Using RAM for storage
  do {
-     try await Assembler.assemble(to: "192.168.1.236", port: 80) {
+     try await Assembler.assemble(to: "192.168.1.218", port: 80) {
          Command.SetA(number: 1)
          Command.SetBFromA
 
@@ -40,6 +41,11 @@ Firmware.build()
          Command.StoreA(to: .address(11000))
 
          Command.LoadA(from: .address(12000))
+
+         Command.SetCFromA
+         Command.SetDFromA
+         Command.SetEFromA
+
          Command.Calculate(using: .subtraction)
          Command.JumpOnZero(to: .label("Start"))
          Command.StoreA(to: .address(12000))
@@ -49,8 +55,7 @@ Firmware.build()
  } catch {
      print("Assembly error: \(error.localizedDescription)")
  }
-
- */
+*/
 
 // Using registers
 do {
@@ -93,20 +98,34 @@ do {
 }
 
 /*
- do {
-     try await Assembler.assemble(to: "192.168.1.236", port: 80) {
-         Command.SetA(number: 0b10101010)
-         Command.SetCFromA
-         Command.SetA(number: 0)
-
+do {
+     try await Assembler.assemble(to: "192.168.1.218", port: 80) {
+         Command.SetA(number: 0b11111111)
          Label("Loop")
-         //Command.SetEFromA
-         //Command.SetA(number: 0)
-         //Command.SetAFromE
-         Command.SwapAC
+         Command.SetBFromA
+         Command.SetA(number: 0)
+         Command.SetAFromB
          Command.Jump(to: .label("Loop"))
      }
- } catch {
-     print("Assembly error: \(error.localizedDescription)")
- }
- */
+} catch {
+    print("Assembly error: \(error.localizedDescription)")
+}
+*/
+
+/*
+do {
+    try await Assembler.assemble(to: "192.168.1.218", port: 80) {
+        Command.SetA(number: 0b1)
+        Command.SetBFromA
+        Command.SetA(number: 0b11111100)
+        Label("Loop")
+        Command.Calculate(using: .addition)
+        Command.JumpOnCarry(to: .label("End"))
+        Command.Jump(to: .label("Loop"))
+        Label("End")
+        Command.Halt
+    }
+} catch {
+    print("Assembly error: \(error.localizedDescription)")
+}
+*/
