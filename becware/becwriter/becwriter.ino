@@ -54,18 +54,13 @@ void setup() {
 
 void commitBit(bool on) {
   digitalWrite(dataPin, on);
-  delayMicroseconds(100);
+  delayMicroseconds(10);
   digitalWrite(clockPin, HIGH);
-  delayMicroseconds(100);
+  delayMicroseconds(10);
   digitalWrite(clockPin, LOW);
 }
 
 void commitByte(uint8_t byte, uint16_t location, WiFiClient client) {
-  if(location==0) {
-    digitalWrite(gatePin, 0);
-    delay(1);
-  }
-
   sprintf(outbuf, "                :          | %04X: [%02X]\n", location, byte);
 
   for(int f=0;f<16;f++) {
@@ -82,11 +77,19 @@ void commitByte(uint8_t byte, uint16_t location, WiFiClient client) {
     commitBit(on);
   }
 
-  digitalWrite(commitBytePin, 1);
+  if(location==0) {
+    digitalWrite(gatePin, 0);
+    delay(1);
+  }
+
   client.print(outbuf);
-  delayMicroseconds(2000);
+#ifdef LOG
+  Serial.print(outbuf);
+#endif
+  digitalWrite(commitBytePin, 1);
+  delayMicroseconds(10000);
   digitalWrite(commitBytePin, 0);
-  delayMicroseconds(2000);
+  delayMicroseconds(10000);
 }
 
 bool handleClientSession(WiFiClient client) {
@@ -133,6 +136,9 @@ bool handleClientSession(WiFiClient client) {
 }
 
 void loop() {
+  ESP.wdtDisable(); // Software WDT OFF
+  *((volatile uint32_t*) 0x60000900) &= ~(1); // Hardware WDT OFF
+  
   if (WiFiClient client = wifiServer.available()) { 
 #ifdef LOG
     Serial.println("Client connected");

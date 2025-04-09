@@ -97,8 +97,8 @@ do {
     print("Assembly error: \(error.localizedDescription)")
 }
 
-/*
 // Testing register swapping
+/*
 do {
      try await Assembler.assemble(to: "192.168.1.218", port: 80) {
          Command.SetA(number: 0b11111111)
